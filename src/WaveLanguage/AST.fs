@@ -10,3 +10,4 @@ type Expr =
     | Match of Expr * (Expr * Expr) list
     | List of Expr list
     | BinaryOp of string * Expr * Expr
+    | Sequence of Expr list

@@ -10,7 +10,7 @@ module Program =
         try
             let filename = 
                 if argv.Length > 0 then argv.[0]
-                else "examples/simple.wave"
+                else "examples/factorial.wave"
                 
             if not (File.Exists filename) then
                 printfn "Файл не найден: %s" filename

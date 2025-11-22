@@ -70,6 +70,10 @@ factorial(5)"""
         // Проверяем, что результат содержит вызов функции
         match result with
         | Expr.Application(Expr.Identifier "factorial", [Expr.Number 5.0]) -> Assert.Pass()
+        | Expr.Sequence(exprs) ->
+            match List.tryLast exprs with
+            | Some(Expr.Application(Expr.Identifier "factorial", [Expr.Number 5.0])) -> Assert.Pass()
+            | _ -> Assert.Fail("Ожидался вызов функции factorial(5)")
         | _ -> Assert.Fail("Ожидался вызов функции factorial(5)")
 
     [<Test>]
@@ -119,6 +123,10 @@ double(5)"""
         // Проверяем, что результат содержит вызов функции
         match result with
         | Expr.Application(Expr.Identifier "double", [Expr.Number 5.0]) -> Assert.Pass()
+        | Expr.Sequence(exprs) ->
+            match List.tryLast exprs with
+            | Some(Expr.Application(Expr.Identifier "double", [Expr.Number 5.0])) -> Assert.Pass()
+            | _ -> Assert.Fail("Ожидался вызов функции double(5)")
         | _ -> Assert.Fail("Ожидался вызов функции double(5)")
         
     [<Test>]
@@ -137,6 +145,10 @@ factorial(5)"""
         // Проверяем, что результат содержит вызов функции
         match result with
         | Expr.Application(Expr.Identifier "factorial", [Expr.Number 5.0]) -> Assert.Pass()
+        | Expr.Sequence(exprs) ->
+            match List.tryLast exprs with
+            | Some(Expr.Application(Expr.Identifier "factorial", [Expr.Number 5.0])) -> Assert.Pass()
+            | _ -> Assert.Fail("Ожидался вызов функции factorial(5)")
         | _ -> Assert.Fail("Ожидался вызов функции factorial(5)")
         
     [<Test>]

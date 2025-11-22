@@ -9,7 +9,7 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WaveLanguage", "src\WaveLan
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaveLanguage.Tests", "tests\WaveLanguage.Tests\WaveLanguage.Tests.csproj", "{1787804B-E2D7-4EBA-82AB-BCF2E8E40862}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaveLanguage.Tests", "tests\WaveLanguage.Tests.fsproj", "{1787804B-E2D7-4EBA-82AB-BCF2E8E40862}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

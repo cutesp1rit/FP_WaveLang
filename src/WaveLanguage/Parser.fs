@@ -20,18 +20,21 @@ module Parser =
             | Token.Comma :: rest -> skipCommas rest
             | _ -> tokens
             
-        let tokens = skipCommas tokens
-        match tokens with
-        | [] -> raise (ParseError "Пустая программа")
-        | _ ->
-            let expr, remaining = parseTopLevel tokens
-            match skipCommas remaining with
-            | [] -> expr
+        let rec parseAllExpressions tokens acc =
+            let tokens = skipCommas tokens
+            match tokens with
+            | [] -> List.rev acc
             | _ ->
-                // Если есть еще токены, это может быть последовательность выражений
-                let nextExpr = parseProgram remaining
-                // Для простоты возвращаем последнее выражение
-                nextExpr
+                let expr, remaining = parseTopLevel tokens
+                match skipCommas remaining with
+                | [] -> List.rev (expr :: acc)
+                | rest -> parseAllExpressions rest (expr :: acc)
+                
+        let expressions = parseAllExpressions tokens []
+        match expressions with
+        | [] -> raise (ParseError "Пустая программа")
+        | [single] -> single
+        | multiple -> Expr.Sequence multiple
 
     /// Парсинг выражения верхнего уровня
     and parseTopLevel (tokens: Token list): Expr * Token list =
