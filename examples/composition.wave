@@ -1,0 +1,4 @@
+double ~ x ~ x * 2
+addOne ~ x ~ x + 1
+
+3 ~ double ~ addOne

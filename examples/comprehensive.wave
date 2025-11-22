@@ -1,0 +1,9 @@
+double ~ x ~ x * 2
+addOne ~ x ~ x + 1
+square ~ x ~ x * x
+
+3 ~ double ~ addOne
+
+[1, 2, 3] ~ double
+
+[1, 2, 3, 4, 5] ~ square
