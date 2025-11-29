@@ -7,8 +7,12 @@
 
   <ItemGroup>
     <Compile Include="AST.fs" />
+    <Compile Include="Value.fs" />
     <Compile Include="Lexer.fs" />
     <Compile Include="Parser.fs" />
+    <Compile Include="Builtin.fs" />
+    <Compile Include="Evaluator.fs" />
+    <Compile Include="REPL.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
