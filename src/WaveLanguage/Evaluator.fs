@@ -121,5 +121,15 @@ module Evaluator =
             Expr.List (List.map (fun el -> Expr.Application(Expr.Identifier fname, [el])) elems)
         | _ -> ast
 
-
-
+    let rec evalWithEnv (env: Env) (expr: Expr) : Value * Env =
+            match expr with
+            | Expr.Let(name, valueExpr, bodyExpr) ->
+                let value =
+                    match valueExpr with
+                    | Expr.Lambda(args, lambdaBody) ->
+                        Value.Fun(env, args, lambdaBody)
+                    | _ ->
+                        eval env valueExpr
+                let env' = Map.add name value env
+                (value, env')
+            | _ -> (eval env expr, env)

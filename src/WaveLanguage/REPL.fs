@@ -8,7 +8,6 @@ module REPL =
     let initialEnv : Env =
         Builtins.builtins |> Map.ofList
 
-    /// Простой REPL
     let rec repl (env: Env) =
         Console.Write("> ")
         let line = Console.ReadLine()
@@ -19,10 +18,15 @@ module REPL =
             try
                 let tokens = Lexer.tokenize code
                 let ast = Parser.parse tokens
-                let value = Evaluator.eval env ast
+                let value, newEnv = Evaluator.evalWithEnv env ast
                 Builtins.prettyPrint value
                 printfn ""
-                repl env
+                repl newEnv
             with e ->
                 printfn "Error: %s" e.Message
                 repl env
+
+
+
+
+
