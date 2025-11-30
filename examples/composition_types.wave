@@ -1,0 +1,8 @@
+double ~ x ~ x * 2
+addOne ~ x ~ x + 1
+
+3 ~~ double ~~ addOne    // <- Строгая цепочка: addOne(double(3)) == 7
+
+3 ~> double ~> addOne    // <- Ленивая цепочка (аналогично строгой, если нет Thunk)
+
+[1,2,3] |~ double |~ addOne  // Последовательно map double, потом map addOne: [3, 5, 7]

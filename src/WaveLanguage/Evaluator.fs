@@ -31,10 +31,24 @@ module Evaluator =
             match Map.tryFind x env with
             | Some v -> v
             | None -> failwithf "Unbound variable: %s" x
-
         | Expr.List xs ->
             Value.List (List.map (eval env) xs)
-
+        | StrictCompose (arg, f) ->
+            let v = eval env arg
+            let fv = eval env f
+            apply fv [v]
+        | LazyCompose (arg, f) ->
+            let v = eval env arg
+            let fv = eval env f
+            apply fv [v]
+        | ParallelCompose (arg, f) ->
+            match eval env arg with
+            | Value.List xs ->
+                let fv = eval env f
+                Value.List (xs |> List.map (fun v -> apply fv [v]))
+            | v ->
+                let fv = eval env f
+                apply fv [v]
         | BinaryOp (op, a, b) ->
             let va, vb = eval env a, eval env b
             match op, va, vb with

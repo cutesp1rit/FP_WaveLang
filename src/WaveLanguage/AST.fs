@@ -11,3 +11,10 @@ type Expr =
     | List of Expr list
     | BinaryOp of string * Expr * Expr
     | Sequence of Expr list
+    | StrictCompose of Expr * Expr
+    | LazyCompose of Expr * Expr
+    | ParallelCompose of Expr * Expr
+
+
+
+

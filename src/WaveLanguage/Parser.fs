@@ -127,36 +127,33 @@ module Parser =
 
     /// Парсинг композиции функций
     and parseComposition (tokens: Token list): Expr * Token list =
+        let rec loop left tokens =
+            match tokens with
+            | Token.Operator "~~" :: rest ->
+                let right, rest' = parseBinaryOp rest
+                loop (Expr.StrictCompose(left, right)) rest'
+            | Token.Operator "~>" :: rest ->
+                let right, rest' = parseBinaryOp rest
+                loop (Expr.LazyCompose(left, right)) rest'
+            | Token.Operator "|~" :: rest ->
+                let right, rest' = parseBinaryOp rest
+                loop (Expr.ParallelCompose(left, right)) rest'
+            | Token.Tilde :: rest ->
+                let right, rest' = parseBinaryOp rest
+                loop (Expr.Application(right, [left])) rest'
+            | _ -> left, tokens
         let left, rest = parseBinaryOp tokens
-        match rest with
-        | Token.Tilde :: rest2 ->
-            // Парсинг композиции функций
-            parseFunctionComposition left rest2
-        | _ -> left, rest
-
-    /// Парсинг композиции функций
-    and parseFunctionComposition (leftExpr: Expr) (tokens: Token list): Expr * Token list =
-        match tokens with
-        | Token.Identifier funcName :: Token.Tilde :: rest ->
-            // Еще одна композиция
-            let applied = Expr.Application(Expr.Identifier funcName, [leftExpr])
-            parseFunctionComposition applied rest
-        | Token.Identifier funcName :: rest ->
-            // Последняя функция в цепочке композиции
-            let applied = Expr.Application(Expr.Identifier funcName, [leftExpr])
-            applied, rest
-        | _ ->
-            let tokenStr = tokens |> List.truncate 3 |> List.map string |> String.concat " "
-            raise (ParseError $"Ожидался идентификатор функции в композиции, получено: {tokenStr}...")
+        loop left rest
 
     /// Парсинг бинарных операций
     and parseBinaryOp (tokens: Token list): Expr * Token list =
         let left, rest = parsePrimary tokens
         match rest with
-        | Token.Operator op :: rest2 ->
+        | Token.Operator op :: rest2 when op = "+" || op = "-" || op = "*" || op = "/" || op = "=" ->
             let right, remaining = parseBinaryOp rest2
             Expr.BinaryOp(op, left, right), remaining
         | _ -> left, rest
+
 
     /// Парсинг первичных выражений
     and parsePrimary (tokens: Token list): Expr * Token list =
