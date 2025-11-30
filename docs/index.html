@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wave Language Documentation</title>
+    <style>
+        :root {
+            --primary-color: #2196F3;
+            --secondary-color: #00BCD4;
+            --bg-color: #f5f5f5;
+            --text-color: #333;
+            --code-bg: #282c34;
+            --code-text: #abb2bf;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 4em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .wave-icon {
+            width: 60px;
+            height: 60px;
+            stroke: white;
+        }
+
+
+        .subtitle {
+            font-size: 1.5em;
+            opacity: 0.9;
+        }
+
+        .content {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-top: -30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: row;
+            margin: 40px 0;
+        }
+
+        .nav-button {
+            display: block;
+            padding: 10px;
+            width: fit-content;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .nav-button i {
+            display: block;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .feature {
+            padding: 30px;
+            background: var(--bg-color);
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .feature h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .code-example {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .quickstart {
+            background: #e3f2fd;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 40px 0;
+            border: 2px solid var(--primary-color);
+        }
+
+        .quickstart h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: white;
+            margin-top: 40px;
+        }
+
+        a {
+            color: var(--primary-color);
+        }
+
+        .github-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 15px 30px;
+            background: white;
+            color: var(--primary-color);
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .github-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255,255,255,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="wave-icon left">
+                    <path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+                    <path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+                    <path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+                </svg>
+                Wave Language
+                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="wave-icon right">
+                    <path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+                    <path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+                    <path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+                </svg>
+            </h1>
+            <p class="subtitle">Функциональный язык программирования с композицией функций</p>
+            <a href="https://github.com/cutesp1rit/FP_WaveLang" class="github-link">View on GitHub</a>
+        </header>
+
+        <div class="content">
+            <section class="intro">
+                <h2>Добро пожаловать в Wave!</h2>
+                <p>
+                    Wave — это функциональный язык программирования, вдохновленный идеей "волновых" преобразований данных.
+                    Язык построен на простых, но мощных концепциях: композиции функций, паттерн-матчинге и автоматическом
+                    применении функций к спискам.
+                </p>
+            </section>
+
+            <div class="nav-buttons">
+                <a href="debugger.html" class="nav-button">
+                    <div>Переходите в визуальный отладчик и тестируйте!</div>
+                </a>
+            </div>
+
+            <section class="features">
+                <div class="feature">
+                    <h3>Композиция функций</h3>
+                    <p>Оператор <code>~</code> позволяет естественно соединять функции в цепочки преобразований.</p>
+                </div>
+                <div class="feature">
+                    <h3>Паттерн-матчинг</h3>
+                    <p>Определяйте функции с несколькими вариантами, проверяя условия элегантно и выразительно.</p>
+                </div>
+                <div class="feature">
+                    <h3>Автоматический map</h3>
+                    <p>Применяйте функции к спискам автоматически — язык сам понимает ваши намерения.</p>
+                </div>
+                <div class="feature">
+                    <h3>Рекурсия</h3>
+                    <p>Полная поддержка рекурсивных функций как основного механизма итерации.</p>
+                </div>
+                <div class="feature">
+                    <h3>Простой синтаксис</h3>
+                    <p>Минималистичный и понятный синтаксис, сосредоточенный на главном — ваших идеях.</p>
+                </div>
+                <div class="feature">
+                    <h3>REPL</h3>
+                    <p>Интерактивная среда для экспериментов и быстрого прототипирования.</p>
+                </div>
+            </section>
+
+            <div class="quickstart">
+                <h2>Быстрый старт</h2>
+                <p><strong>Установка:</strong></p>
+                <div class="code-example">
+git clone https://github.com/yourusername/FP_WaveLang.git
+cd FP_WaveLang
+dotnet build
+                </div>
+
+                <p><strong>Запуск программы:</strong></p>
+                <div class="code-example">
+dotnet run --project src/WaveLanguage/WaveLanguage.fsproj examples/factorial.wave
+                </div>
+
+                <p><strong>Интерактивный REPL:</strong></p>
+                <div class="code-example">
+dotnet run --project src/WaveLanguage/WaveLanguage.fsproj
+                </div>
+            </div>
+
+            <section class="example">
+                <h2>Пример кода</h2>
+                <p>Вычисление факториала в Wave:</p>
+                <div class="code-example">
+factorial ~ n
+  n = 0 ~ 1
+  _ ~ n * factorial(n - 1)
+
+factorial(5)  // Результат: 120
+                </div>
+
+                <p>Композиция функций:</p>
+                <div class="code-example">
+double ~ x ~ x * 2
+addOne ~ x ~ x + 1
+square ~ x ~ x * x
+
+3 ~ double ~ addOne ~ square  // Результат: 49
+                </div>
+
+                <p>Работа со списками:</p>
+                <div class="code-example">
+[1, 2, 3, 4, 5] ~ double  // [2, 4, 6, 8, 10]
+[1, 2, 3, 4, 5] ~ square  // [1, 4, 9, 16, 25]
+                </div>
+            </section>
+
+            <section class="team">
+                <h2>Команда разработки</h2>
+                <ul>
+                    <li><strong>Максимов Тимофей Степанович</strong> — Парсер и AST</li>
+                    <li><strong>Попов Фома Алексеевич</strong> — Интерпретатор, встроенные функции и REPL</li>
+                    <li><strong>Пикулева Стефания Дмитриевна</strong> — Документация, примеры и визуальный отладчик</li>
+                </ul>
+            </section>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Wave Language Team. Учебный проект по функциональному программированию.</p>
+        </footer>
+    </div>
+</body>
+</html>
+

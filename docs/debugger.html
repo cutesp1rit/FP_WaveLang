@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wave Visual Debugger</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2196F3, #00BCD4);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom:10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .wave-icon {
+            width: 60px;
+            height: 60px;
+            stroke: white;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 30px;
+        }
+
+        .panel {
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .panel h2 {
+            color: #2196F3;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #2196F3;
+        }
+
+        #code-input {
+            width: 100%;
+            min-height: 300px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: #282c34;
+            color: #abb2bf;
+            resize: vertical;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2196F3, #00BCD4);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
+        }
+
+        .btn-secondary {
+            background: #9E9E9E;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #757575;
+        }
+
+        .btn-success {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #45a049;
+        }
+
+        .execution-log {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 2px solid #ddd;
+        }
+
+        .log-entry {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 4px solid #2196F3;
+            background: #e3f2fd;
+            transition: all 0.3s;
+        }
+
+        .log-entry.active {
+            background: #ffeb3b;
+            border-left-color: #ff9800;
+            transform: scale(1.02);
+        }
+
+        .log-entry.completed {
+            background: #c8e6c9;
+            border-left-color: #4CAF50;
+        }
+
+        .log-entry-step {
+            font-weight: bold;
+            color: #2196F3;
+            margin-bottom: 5px;
+        }
+
+        .log-entry-expr {
+            font-family: 'Courier New', monospace;
+            color: #333;
+            margin: 5px 0;
+        }
+
+        .log-entry-result {
+            color: #4CAF50;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .visualization {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            border: 2px solid #ddd;
+            min-height: 300px;
+        }
+
+        .flow-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .flow-node {
+            padding: 15px 25px;
+            background: linear-gradient(135deg, #2196F3, #00BCD4);
+            color: white;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .flow-node.active {
+            background: linear-gradient(135deg, #ff9800, #ff5722);
+            transform: scale(1.1);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1.1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .flow-arrow {
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 20px solid #2196F3;
+        }
+
+        .state-viewer {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            margin-top: 20px;
+        }
+
+        .state-viewer h3 {
+            color: #2196F3;
+            margin-bottom: 10px;
+        }
+
+        .state-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: #f5f5f5;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .examples {
+            grid-column: 1 / -1;
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .examples h2 {
+            color: #2196F3;
+            margin-bottom: 15px;
+        }
+
+        .example-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .example-btn {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #2196F3;
+            color: #2196F3;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .example-btn:hover {
+            background: #2196F3;
+            color: white;
+        }
+
+        .status-bar {
+            background: #f5f5f5;
+            padding: 15px 30px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4CAF50;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .error-message {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            color: #c62828;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="wave-icon left">
+                <path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+                <path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+                <path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+            </svg>
+            Wave Visual Debugger
+            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="wave-icon right">
+                <path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+                <path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+                <path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+            </svg>
+            </h1>
+            <p>Визуальная отладка цепочек преобразований</p>
+        </header>
+
+        <div class="main-content">
+            <div class="panel">
+                <h2>Код программы</h2>
+                <textarea id="code-input" placeholder="Введите код Wave здесь...">factorial ~ n
+  n = 0 ~ 1
+  _ ~ n * factorial(n - 1)
+
+factorial(5)</textarea>
+                <div class="controls">
+                    <button class="btn-primary" onclick="runDebugger()">Запустить</button>
+                    <button class="btn-success" onclick="stepForward()">Следующий шаг</button>
+                    <button class="btn-secondary" onclick="stepBackward()">Предыдущий шаг</button>
+                    <button class="btn-secondary" onclick="reset()">Сброс</button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Лог выполнения</h2>
+                <div class="execution-log" id="execution-log">
+                    <p style="color: #999; text-align: center;">Запустите программу для просмотра логов</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Визуализация потока</h2>
+                <div class="visualization" id="visualization">
+                    <div class="flow-diagram" id="flow-diagram">
+                        <p style="color: #999; text-align: center;">Граф выполнения появится здесь</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Состояние данных</h2>
+                <div class="state-viewer" id="state-viewer">
+                    <p style="color: #999; text-align: center;">Переменные и значения</p>
+                </div>
+            </div>
+
+            <div class="examples">
+                <h2>Примеры для тестирования</h2>
+                <div class="example-buttons">
+                    <button class="example-btn" onclick="loadExample('factorial')">Факториал</button>
+                    <button class="example-btn" onclick="loadExample('fibonacci')">Фибоначчи</button>
+                    <button class="example-btn" onclick="loadExample('composition')">Композиция</button>
+                    <button class="example-btn" onclick="loadExample('list')">Списки</button>
+                    <button class="example-btn" onclick="loadExample('higher_order')">Высшего порядка</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-indicator"></div>
+                <span id="status-text">Готов к работе</span>
+            </div>
+            <div class="status-item">
+                <span id="step-counter">Шаг: 0 / 0</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let executionSteps = [];
+        let currentStep = 0;
+
+        const examples = {
+            factorial: `factorial ~ n
+  n = 0 ~ 1
+  _ ~ n * factorial(n - 1)
+
+factorial(5)`,
+            fibonacci: `fib ~ n
+  n = 0 ~ 0
+  n = 1 ~ 1
+  _ ~ fib(n - 1) + fib(n - 2)
+
+fib(10)`,
+            composition: `double ~ x ~ x * 2
+addOne ~ x ~ x + 1
+square ~ x ~ x * x
+
+3 ~ double ~ addOne ~ square`,
+            list: `double ~ x ~ x * 2
+square ~ x ~ x * x
+
+[1, 2, 3, 4, 5] ~ double
+[1, 2, 3, 4, 5] ~ square`,
+            higher_order: `apply_twice ~ f ~ x ~ f(f(x))
+
+inc ~ x ~ x + 1
+
+apply_twice(inc, 5)`
+        };
+
+        function loadExample(name) {
+            document.getElementById('code-input').value = examples[name];
+            document.getElementById('status-text').textContent = `Загружен пример: ${name}`;
+        }
+
+        function runDebugger() {
+            const code = document.getElementById('code-input').value;
+            document.getElementById('status-text').textContent = 'Выполнение...';
+            
+            // Симуляция выполнения (в реальной реализации здесь должен быть вызов интерпретатора)
+            executionSteps = generateMockSteps(code);
+            currentStep = 0;
+            
+            renderExecutionLog();
+            renderVisualization();
+            renderStateViewer();
+            updateStepCounter();
+            
+            document.getElementById('status-text').textContent = 'Выполнение завершено';
+        }
+
+        function generateMockSteps(code) {
+            // Простая симуляция шагов выполнения
+            const lines = code.trim().split('\n');
+            const steps = [];
+            
+            // Анализ определений функций
+            let funcDefs = [];
+            let mainExpr = null;
+            
+            for (let line of lines) {
+                line = line.trim();
+                if (line.includes('~') && !line.includes('(')) {
+                    funcDefs.push(line);
+                } else if (line.includes('(')) {
+                    mainExpr = line;
+                }
+            }
+            
+            // Добавляем шаги
+            for (let def of funcDefs) {
+                steps.push({
+                    type: 'definition',
+                    expr: def,
+                    description: 'Определение функции',
+                    state: {}
+                });
+            }
+            
+            if (mainExpr) {
+                // Симуляция вызова
+                const funcName = mainExpr.split('(')[0];
+                const arg = mainExpr.match(/\d+/);
+                
+                if (funcName === 'factorial' && arg) {
+                    const n = parseInt(arg[0]);
+                    for (let i = n; i >= 0; i--) {
+                        steps.push({
+                            type: 'evaluation',
+                            expr: `${funcName}(${i})`,
+                            description: i === 0 ? 'Базовый случай' : 'Рекурсивный вызов',
+                            result: i === 0 ? 1 : `${i} * ${funcName}(${i-1})`,
+                            state: { n: i }
+                        });
+                    }
+                    
+                    // Обратная подстановка
+                    let result = 1;
+                    for (let i = 1; i <= n; i++) {
+                        result *= i;
+                        steps.push({
+                            type: 'return',
+                            expr: `${funcName}(${i})`,
+                            description: 'Возврат значения',
+                            result: result,
+                            state: { result: result }
+                        });
+                    }
+                } else if (funcName === 'fib' && arg) {
+                    const n = parseInt(arg[0]);
+                    steps.push({
+                        type: 'evaluation',
+                        expr: `fib(${n})`,
+                        description: 'Вычисление числа Фибоначчи',
+                        result: fibonacci(n),
+                        state: { n: n }
+                    });
+                } else {
+                    // Простое выражение
+                    steps.push({
+                        type: 'evaluation',
+                        expr: mainExpr,
+                        description: 'Вычисление выражения',
+                        result: '?',
+                        state: {}
+                    });
+                }
+            }
+            
+            return steps;
+        }
+
+        function fibonacci(n) {
+            if (n <= 1) return n;
+            return fibonacci(n - 1) + fibonacci(n - 2);
+        }
+
+        function renderExecutionLog() {
+            const log = document.getElementById('execution-log');
+            log.innerHTML = '';
+            
+            executionSteps.forEach((step, index) => {
+                const entry = document.createElement('div');
+                entry.className = 'log-entry';
+                if (index === currentStep) entry.classList.add('active');
+                if (index < currentStep) entry.classList.add('completed');
+                
+                entry.innerHTML = `
+                    <div class="log-entry-step">Шаг ${index + 1}: ${step.description}</div>
+                    <div class="log-entry-expr">${step.expr}</div>
+                    ${step.result ? `<div class="log-entry-result">→ ${step.result}</div>` : ''}
+                `;
+                
+                log.appendChild(entry);
+            });
+        }
+
+        function renderVisualization() {
+            const diagram = document.getElementById('flow-diagram');
+            diagram.innerHTML = '';
+            
+            executionSteps.forEach((step, index) => {
+                const node = document.createElement('div');
+                node.className = 'flow-node';
+                if (index === currentStep) node.classList.add('active');
+                node.textContent = step.expr;
+                
+                diagram.appendChild(node);
+                
+                if (index < executionSteps.length - 1) {
+                    const arrow = document.createElement('div');
+                    arrow.className = 'flow-arrow';
+                    diagram.appendChild(arrow);
+                }
+            });
+        }
+
+        function renderStateViewer() {
+            const viewer = document.getElementById('state-viewer');
+            const step = executionSteps[currentStep];
+            
+            if (!step) {
+                viewer.innerHTML = '<p style="color: #999;">Нет данных о состоянии</p>';
+                return;
+            }
+            
+            viewer.innerHTML = '<h3>Переменные:</h3>';
+            
+            if (Object.keys(step.state).length === 0) {
+                viewer.innerHTML += '<p style="color: #999;">Нет переменных</p>';
+            } else {
+                for (let [key, value] of Object.entries(step.state)) {
+                    const item = document.createElement('div');
+                    item.className = 'state-item';
+                    item.textContent = `${key} = ${value}`;
+                    viewer.appendChild(item);
+                }
+            }
+        }
+
+        function updateStepCounter() {
+            document.getElementById('step-counter').textContent = 
+                `Шаг: ${currentStep + 1} / ${executionSteps.length}`;
+        }
+
+        function stepForward() {
+            if (currentStep < executionSteps.length - 1) {
+                currentStep++;
+                renderExecutionLog();
+                renderVisualization();
+                renderStateViewer();
+                updateStepCounter();
+            }
+        }
+
+        function stepBackward() {
+            if (currentStep > 0) {
+                currentStep--;
+                renderExecutionLog();
+                renderVisualization();
+                renderStateViewer();
+                updateStepCounter();
+            }
+        }
+
+        function reset() {
+            currentStep = 0;
+            executionSteps = [];
+            document.getElementById('execution-log').innerHTML = 
+                '<p style="color: #999; text-align: center;">Запустите программу для просмотра логов</p>';
+            document.getElementById('flow-diagram').innerHTML = 
+                '<p style="color: #999; text-align: center;">Граф выполнения появится здесь</p>';
+            document.getElementById('state-viewer').innerHTML = 
+                '<p style="color: #999; text-align: center;">Переменные и значения</p>';
+            document.getElementById('status-text').textContent = 'Готов к работе';
+            updateStepCounter();
+        }
+    </script>
+</body>
+</html>
+

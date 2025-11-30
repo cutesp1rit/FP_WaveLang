@@ -1,0 +1,5 @@
+double ~ x ~ x * 2
+addTen ~ x ~ x + 10
+square ~ x ~ x * x
+
+5 ~ double ~ addTen ~ square

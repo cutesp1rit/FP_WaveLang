@@ -1,0 +1,5 @@
+inc ~ x ~ x + 1
+double ~ x ~ x * 2
+square ~ x ~ x * x
+
+[1, 2, 3, 4] ~ inc ~ double
